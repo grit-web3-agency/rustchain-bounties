@@ -6,6 +6,7 @@
     "start": "ts-node src/index.ts start",
     "demo": "ts-node src/index.ts demo",
     "demo:devnet": "ts-node src/demo-run.ts",
+    "e2e": "ts-node e2e/devnet-demo.ts",
     "test": "jest --forceExit"
   },
   "dependencies": {
