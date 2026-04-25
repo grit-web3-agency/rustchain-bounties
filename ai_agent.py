@@ -1,17 +1,29 @@
+import os
 import requests
 from github import Github
 import json
 import random
 import string
 
-# GitHub API Token for authentication
-GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN'
+# GitHub API Token for authentication (read from environment when available)
+# Keep a safe default so importing this module doesn't attempt network calls
+GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN', '')
 REPO_NAME = 'Scottcjn/rustchain-bounties'
 RTC_WALLET = f"RTC-agent-{''.join(random.choices(string.ascii_uppercase + string.digits, k=10))}"
 
-# Initialize GitHub client
-g = Github(GITHUB_TOKEN)
-repo = g.get_repo(REPO_NAME)
+# Initialize GitHub client lazily and defensively. If no token is provided
+# avoid making network calls at import time so unit tests can patch
+# ai_agent.repo without requiring valid credentials.
+g = None
+repo = None
+if GITHUB_TOKEN:
+    try:
+        g = Github(GITHUB_TOKEN)
+        repo = g.get_repo(REPO_NAME)
+    except Exception:
+        # If credentials are invalid or network fails, leave repo as None.
+        g = None
+        repo = None
 
 # Function to get open issues from the repository
 def get_open_bounties():
