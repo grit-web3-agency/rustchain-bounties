@@ -77,15 +77,20 @@ def load_allowlist(path: str) -> dict:
         allowlist = {"files": [], "patterns": []}
         current_key = None
         with open(path, "r", encoding="utf-8") as f:
-            for line in f:
-                stripped = line.strip()
-                if stripped.startswith("files:"):
-                    current_key = "files"
-                elif stripped.startswith("patterns:"):
-                    current_key = "patterns"
-                elif stripped.startswith("- ") and current_key:
-                    val = stripped[2:].strip().strip('"').strip("'")
-                    allowlist[current_key].append(val)
+            raw = f.read()
+        # Reject content that looks like invalid YAML (e.g. starts with braces)
+        stripped_raw = raw.strip()
+        if stripped_raw and stripped_raw[0] in ('{', '}', '[', ']'):
+            raise ValueError(f"Invalid YAML in {path}: unexpected '{stripped_raw[0]}'")
+        for line in raw.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("files:"):
+                current_key = "files"
+            elif stripped.startswith("patterns:"):
+                current_key = "patterns"
+            elif stripped.startswith("- ") and current_key:
+                val = stripped[2:].strip().strip('"').strip("'")
+                allowlist[current_key].append(val)
         return allowlist
 
     with open(path, "r", encoding="utf-8") as f:
