@@ -150,7 +150,7 @@ class TestImplementSolution:
         from ai_agent import implement_solution
         implement_solution(forked_repo, "test-branch")
 
-        content = forked_repo.create_file.call_args[0][1]
+        content = forked_repo.create_file.call_args[0][2]
         assert "AI Agent Solution" in content
 
 

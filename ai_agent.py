@@ -1,3 +1,4 @@
+import os
 import requests
 from github import Github
 import json
@@ -5,16 +6,24 @@ import random
 import string
 
 # GitHub API Token for authentication
-GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN'
+GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN', 'YOUR_GITHUB_TOKEN')
 REPO_NAME = 'Scottcjn/rustchain-bounties'
 RTC_WALLET = f"RTC-agent-{''.join(random.choices(string.ascii_uppercase + string.digits, k=10))}"
 
-# Initialize GitHub client
-g = Github(GITHUB_TOKEN)
-repo = g.get_repo(REPO_NAME)
+# Initialize GitHub client (deferred to avoid API calls at import time)
+g = None
+repo = None
+
+def _init_github():
+    global g, repo
+    if g is None:
+        g = Github(GITHUB_TOKEN)
+    if repo is None:
+        repo = g.get_repo(REPO_NAME)
 
 # Function to get open issues from the repository
 def get_open_bounties():
+    _init_github()
     open_bounties = []
     issues = repo.get_issues(state='open')
     for issue in issues:
@@ -30,6 +39,7 @@ def claim_bounty(issue):
 
 # Function to fork the repository and create a branch
 def fork_repo_and_create_branch():
+    _init_github()
     forked_repo = repo.create_fork()
     branch_name = f"ai-agent-{RTC_WALLET}"
     main_branch = forked_repo.get_branch("main")

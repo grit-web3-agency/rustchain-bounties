@@ -346,7 +346,7 @@ def update_table_in_md(md: str, actor: str, gained_xp: int, reason: str,
     )
     target.badges.update(unlocked)
 
-    stamp = dt.datetime.now(dt.UTC).strftime("%Y-%m-%d %H:%M UTC")
+    stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     target.xp = new_total
     target.level = level
     target.title = title
