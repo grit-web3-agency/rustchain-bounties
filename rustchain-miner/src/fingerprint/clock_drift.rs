@@ -4,6 +4,8 @@
 //! timing deltas. Real hardware oscillators produce measurable jitter (CV ~0.02–0.15);
 //! emulators produce suspiciously uniform timing (CV < 0.005).
 
+use std::time::Instant;
+
 use super::CheckResult;
 use crate::config::CLOCK_DRIFT_SAMPLES;
 

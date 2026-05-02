@@ -60,7 +60,7 @@ pub fn classify(brand: &str) -> (&'static str, &'static str) {
     }
 
     // Generic RISC-V detection
-    if lower.contains("riscv") || lower.contains("rv64") || lower.contains("rv32") {
+    if lower.contains("riscv") || lower.contains("risc-v") || lower.contains("rv64") || lower.contains("rv32") {
         return ("RISC-V", "riscv_modern");
     }
 
